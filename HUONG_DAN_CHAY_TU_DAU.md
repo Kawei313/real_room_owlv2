@@ -450,3 +450,22 @@ git pull origin main
 ```
 
 Video, model, môi trường ảo, `hardware.json`, `runs/` và báo cáo sinh ra không được đẩy lên GitHub. Muốn sao lưu kết quả lớn, hãy dùng Google Drive hoặc kho lưu trữ dữ liệu riêng.
+
+## 14. Tài khoản và thông tin đăng nhập
+
+Repository này là public. Tuyệt đối không ghi email cá nhân kèm mật khẩu, mã OTP, khóa tạo mã TOTP, API key, OAuth token hoặc file `credentials.json` vào README, source code hay Git commit.
+
+Nếu một tích hợp cục bộ cần biến môi trường, sao chép file mẫu:
+
+```bash
+cp .env.example .env
+```
+
+Sau đó chỉ sửa `.env` trên máy cá nhân. `.gitignore` đã chặn `.env`, `credentials.json`, `token.json` và các file client secret. Kiểm tra trước mỗi lần push:
+
+```bash
+git status
+git diff --cached
+```
+
+Với Google Drive, ưu tiên OAuth hoặc đăng nhập thiết bị qua công cụ chính thức; không tự động đăng nhập bằng mật khẩu tài khoản và không lưu khóa 2FA trong dự án. Nếu thông tin đăng nhập từng bị gửi trong tin nhắn, log hoặc repository, phải đổi mật khẩu, thu hồi phiên đăng nhập và tạo lại khóa 2FA trước khi tiếp tục sử dụng.
