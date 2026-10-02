@@ -4,6 +4,8 @@ Thư mục này là bộ chạy sẵn theo `KE_HOACH_THU_NGHIEM_OWLV2_CAMERA_GPU
 
 Nếu bắt đầu từ một máy mới, xem hướng dẫn từng bước tại [`HUONG_DAN_CHAY_TU_DAU.md`](HUONG_DAN_CHAY_TU_DAU.md), bao gồm vị trí đặt video và lưu ý với ROS 2 bag `.db3`.
 
+Repository có sẵn `scripts/convert_rosbag_to_mp4.py` để xuất topic ảnh màu từ ROS 2 bag `.db3` sang MP4 trước khi chạy OWLv2.
+
 ## Chạy nhanh
 
 Các lệnh bên dưới đều chạy từ thư mục này:

@@ -13,6 +13,9 @@ Cấu trúc dữ liệu quan trọng:
 
 ```text
 real_room_owlv2/
+├── bags/
+│   ├── room_val/              # ROS 2 bag gốc dùng làm validation
+│   └── room_test/             # ROS 2 bag gốc dùng làm test
 ├── videos/
 │   ├── room_val_raw.mp4       # video dùng chọn prompt/threshold
 │   └── room_test_raw.mp4      # video đánh giá cuối
@@ -135,25 +138,183 @@ python scripts/record_room.py --name room_val --duration 60
 python scripts/record_room.py --name room_test --duration 60
 ```
 
-### Nếu video đang là file `.db3`
+### Nếu dữ liệu đang là ROS 2 bag `.db3`
 
-File `.db3` thường là dữ liệu ROS 2 bag, không phải video MP4 mà OpenCV có thể đọc trực tiếp. Một ROS 2 bag đầy đủ thường gồm:
+Thực hiện lần lượt toàn bộ các bước dưới đây. File `.db3` là cơ sở dữ liệu của ROS 2 bag, không phải MP4; không được đổi tên trực tiếp từ `.db3` sang `.mp4`.
+
+#### Bước 5A — Giải nén nếu file đang là `.zst`
+
+Nếu file tải từ Drive có tên `20261002_144653.db3.zst`:
+
+```bash
+sudo apt update
+sudo apt install zstd
+unzstd 20261002_144653.db3.zst
+```
+
+Kết quả là `20261002_144653.db3`. Máy cần còn tối thiểu khoảng 5.5 GB trống cho file này.
+
+#### Bước 5B — Đặt `.db3` vào đúng thư mục
+
+Đối với video dùng tìm prompt/threshold:
+
+```bash
+mkdir -p bags/room_val
+mv /đường/dẫn/20261002_144653.db3 bags/room_val/
+```
+
+Nếu có `metadata.yaml` đi cùng bản ghi, chép nó vào cùng thư mục:
+
+```bash
+cp /đường/dẫn/metadata.yaml bags/room_val/
+```
+
+Cấu trúc đúng:
 
 ```text
-thu_muc_bag/
+bags/room_val/
 ├── metadata.yaml
 └── 20261002_144653.db3
 ```
 
-Không đặt `.db3` trực tiếp vào `videos/room_val_raw.mp4` và không chỉ đổi phần mở rộng. Cần phát lại bag và xuất topic ảnh màu thành MP4 trước, sau đó đặt MP4 vào `videos/`. Đồng thời phải giữ `metadata.yaml`; chỉ có riêng `.db3` có thể không đủ để `ros2 bag play` nhận dạng bag.
+Đối với bản ghi test độc lập, dùng cấu trúc tương tự:
 
-Kiểm tra bag:
-
-```bash
-ros2 bag info /đường/dẫn/thu_muc_bag
+```text
+bags/room_test/
+├── metadata.yaml
+└── <file-test>.db3
 ```
 
-Tên topic ảnh tùy cấu hình RealSense, thường gần giống `/camera/camera/color/image_raw`. Sau khi xuất được ảnh màu thành MP4, dùng MP4 đó cho pipeline OWLv2.
+Không dùng cùng một `.db3` cho cả validation và test.
+
+#### Bước 5C — Tạo lại metadata nếu chỉ có `.db3`
+
+Kích hoạt môi trường ROS 2 trước; thay `<distro>` bằng phiên bản đang dùng, ví dụ `humble`:
+
+```bash
+source /opt/ros/<distro>/setup.bash
+```
+
+Nếu thư mục chưa có `metadata.yaml`, chạy:
+
+```bash
+ros2 bag reindex bags/room_val
+```
+
+Sau đó xác nhận `bags/room_val/metadata.yaml` đã xuất hiện. Nếu lệnh `reindex` không tồn tại, bản ROS 2 đang dùng quá cũ hoặc thiếu gói rosbag2; cần cài rosbag2 phù hợp với distro.
+
+#### Bước 5D — Kiểm tra bag và tìm topic ảnh màu
+
+```bash
+ros2 bag info bags/room_val
+```
+
+Trong danh sách topic, tìm topic có type:
+
+```text
+sensor_msgs/msg/Image
+```
+
+hoặc:
+
+```text
+sensor_msgs/msg/CompressedImage
+```
+
+Topic ảnh màu RealSense thường có tên gần giống:
+
+```text
+/camera/camera/color/image_raw
+```
+
+Không chọn topic có chữ `depth`, vì OWLv2 hiện chỉ sử dụng ảnh RGB.
+
+#### Bước 5E — Cài thư viện chuyển ảnh ROS sang OpenCV
+
+Thay `<distro>` bằng distro thực tế:
+
+```bash
+sudo apt install ros-<distro>-cv-bridge ros-<distro>-rosbag2-py
+source /opt/ros/<distro>/setup.bash
+source .venv/bin/activate
+```
+
+Nếu môi trường ảo không nhìn thấy package Python của ROS, tạo lại môi trường với system packages:
+
+```bash
+deactivate 2>/dev/null || true
+python3 -m venv --system-site-packages .venv
+source .venv/bin/activate
+python -m pip install numpy opencv-python Pillow 'transformers>=4.40,<5'
+```
+
+#### Bước 5F — Thử xuất 30 frame từ `.db3`
+
+Script sẽ tự ưu tiên topic có chữ `color` và `image_raw`:
+
+```bash
+python scripts/convert_rosbag_to_mp4.py \
+  --bag bags/room_val \
+  --output videos/room_val_preview.mp4 \
+  --fps 30 \
+  --max-frames 30
+```
+
+Mở `videos/room_val_preview.mp4` và kiểm tra màu sắc, chiều ảnh và chuyển động. Nếu script tự chọn sai topic, truyền topic lấy từ `ros2 bag info`:
+
+```bash
+python scripts/convert_rosbag_to_mp4.py \
+  --bag bags/room_val \
+  --output videos/room_val_preview.mp4 \
+  --topic /camera/camera/color/image_raw \
+  --fps 30 \
+  --max-frames 30
+```
+
+`--fps` phải khớp với FPS lúc ghi. Kế hoạch mặc định dùng 30 FPS; nếu camera đã ghi 15 FPS thì thay bằng `--fps 15`.
+
+#### Bước 5G — Xuất toàn bộ room_val sang MP4
+
+Xóa hoặc đổi tên file preview nếu không cần, sau đó bỏ `--max-frames`:
+
+```bash
+python scripts/convert_rosbag_to_mp4.py \
+  --bag bags/room_val \
+  --output videos/room_val_raw.mp4 \
+  --topic /camera/camera/color/image_raw \
+  --fps 30
+```
+
+Nếu topic thực tế khác, thay đúng tên topic của bạn. Kiểm tra MP4:
+
+```bash
+ffprobe -v error \
+  -show_entries stream=codec_name,width,height,r_frame_rate,duration \
+  -of default=noprint_wrappers=1 \
+  videos/room_val_raw.mp4
+```
+
+#### Bước 5H — Xuất room_test
+
+Sau khi đã có một ROS 2 bag test được quay độc lập:
+
+```bash
+ros2 bag info bags/room_test
+python scripts/convert_rosbag_to_mp4.py \
+  --bag bags/room_test \
+  --output videos/room_test_raw.mp4 \
+  --topic /camera/camera/color/image_raw \
+  --fps 30
+```
+
+Sau bước này, pipeline sử dụng hai file:
+
+```text
+videos/room_val_raw.mp4
+videos/room_test_raw.mp4
+```
+
+Giữ nguyên các `.db3` trong `bags/` làm dữ liệu gốc. Thư mục `bags/` và `videos/` đều bị `.gitignore` chặn nên không bị đẩy lên GitHub.
 
 ## 6. Kiểm tra nhanh 5 frame
 
