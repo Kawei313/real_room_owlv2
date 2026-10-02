@@ -2,6 +2,8 @@
 
 Thư mục này là bộ chạy sẵn theo `KE_HOACH_THU_NGHIEM_OWLV2_CAMERA_GPU.md`. Pipeline dùng **OWLv2 Base Patch16 Ensemble**, ảnh màu RealSense và CUDA trên Jetson. Mã không train/fine-tune model.
 
+Nếu bắt đầu từ một máy mới, xem hướng dẫn từng bước tại [`HUONG_DAN_CHAY_TU_DAU.md`](HUONG_DAN_CHAY_TU_DAU.md), bao gồm vị trí đặt video và lưu ý với ROS 2 bag `.db3`.
+
 ## Chạy nhanh
 
 Các lệnh bên dưới đều chạy từ thư mục này:

@@ -29,6 +29,9 @@ checkpoints/
 videos/*
 runs/*
 results/*
+!videos/.gitkeep
+!runs/.gitkeep
+!results/.gitkeep
 *.mp4
 *.avi
 *.mov
@@ -43,5 +46,6 @@ results/*
 # Machine-specific and generated reports
 hardware.json
 report/*.html
+!report/.gitkeep
 
 # Keep optional output folders in local workspace only.
