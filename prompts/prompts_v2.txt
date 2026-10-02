@@ -1,0 +1,18 @@
+# Sao chep prompts_v1 va bo sung class/synonym sau khi xem room_val.
+chair
+table
+monitor
+laptop
+keyboard
+mouse
+bottle
+book
+backpack
+trash bin
+door
+window
+cleaning cloth
+power strip
+extension socket
+extension cord
+

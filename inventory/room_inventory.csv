@@ -1,0 +1,6 @@
+object_id,canonical_class,location,priority
+chair_01,chair,near main desk,high
+monitor_01,monitor,on main desk,high
+power_strip_01,power strip,under main desk,medium
+cloth_01,cleaning cloth,on shelf,high
+

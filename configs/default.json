@@ -1,0 +1,16 @@
+{
+  "model_id": "google/owlv2-base-patch16-ensemble",
+  "threshold": 0.20,
+  "nms_iou": 0.50,
+  "max_detections": 100,
+  "precision": "fp16",
+  "device": "cuda",
+  "warmup_runs": 10,
+  "camera": {
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "warmup_seconds": 3
+  }
+}
+

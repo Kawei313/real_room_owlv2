@@ -1,0 +1,8 @@
+Model: google/owlv2-base-patch16-ensemble
+Python: 3.10+ recommended
+Runtime: PyTorch CUDA build compatible with installed JetPack
+Camera: Intel RealSense through pyrealsense2/librealsense
+Main dependencies: see requirements.txt
+
+Run `python scripts/check_hardware.py` on the Jetson to create the actual hardware.json
+and record Python, PyTorch, CUDA, Transformers, OpenCV, RealSense, L4T and power mode.

@@ -1,0 +1,9 @@
+numpy>=1.24,<3
+opencv-python>=4.8
+Pillow>=10
+transformers>=4.40,<5
+# Tren Jetson, cai torch/torchvision phu hop JetPack truoc khi chay pip install -r.
+torch
+torchvision
+# pyrealsense2 thuong duoc cai tu librealsense/Jetson package, khong ep trong file nay.
+

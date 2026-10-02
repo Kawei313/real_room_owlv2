@@ -1,0 +1,47 @@
+# Python environments and caches
+.venv/
+.venv-*/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# IDE and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Downloaded model/cache data
+.cache/
+models/
+checkpoints/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.onnx
+*.engine
+
+# Camera recordings and large data
+videos/*
+runs/*
+results/*
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.bag
+*.db3
+*.zst
+*.zip
+*.tar
+*.tar.gz
+
+# Machine-specific and generated reports
+hardware.json
+report/*.html
+
+# Keep optional output folders in local workspace only.

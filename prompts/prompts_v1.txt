@@ -1,0 +1,14 @@
+chair
+table
+monitor
+laptop
+keyboard
+mouse
+bottle
+book
+backpack
+trash bin
+door
+window
+cleaning cloth
+
