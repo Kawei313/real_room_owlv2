@@ -470,8 +470,7 @@ git diff --cached
 
 Với Google Drive, ưu tiên OAuth hoặc đăng nhập thiết bị qua công cụ chính thức; không tự động đăng nhập bằng mật khẩu tài khoản và không lưu khóa 2FA trong dự án. Nếu thông tin đăng nhập từng bị gửi trong tin nhắn, log hoặc repository, phải đổi mật khẩu, thu hồi phiên đăng nhập và tạo lại khóa 2FA trước khi tiếp tục sử dụng.
 
-Ví dụ định dạng minh họa (không phải thông tin đăng nhập thật):
 
-```text
-example@example.com|EXAMPLE_PASSWORD|EXAMPLE_TOTP_SECRET
-```
+
+
+thanhduong829a@gmail.com|chatgpt12345@|Z27OAMZYNVIZQTOO6IZGTOJUXABEHZSP
